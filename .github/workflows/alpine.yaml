@@ -1,0 +1,36 @@
+name: mirror-images
+on:
+  schedule:
+    - cron: '30 2 * * * '
+  push:
+    branches:
+    - main
+  workflow_dispatch:
+
+jobs:
+  images:
+    name: Images
+    runs-on: ubuntu-latest
+    steps:
+    - name: Login to DockerHub
+      uses: docker/login-action@v3.1.0
+      with:
+        username: ${{ secrets.DOCKER_USER }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Alpine 
+      uses: docker/build-push-action@v5.3.0
+      with:
+        context: .
+        file: ./alpine/Dockerfile
+        platforms: linux/amd64,linux/arm64
+        push: true
+        tags: |
+          flomesh/alpine:3
+          flomesh/alpine:latest
+
+    
+  
