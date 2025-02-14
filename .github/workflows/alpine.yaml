@@ -1,7 +1,7 @@
 name: mirror-images
 on:
-  # schedule:
-  #   - cron: '30 2 * * * '
+  schedule:
+    - cron: '30 2 * * *'
   push:
     branches:
     - main
@@ -9,7 +9,7 @@ on:
 
 jobs:
   images:
-    name: Images
+    name: Mirror Images
     runs-on: ubuntu-latest
     steps:
     - name: Set up QEMU
@@ -35,6 +35,13 @@ jobs:
         tags: |
           flomesh/alpine:3
           flomesh/alpine:latest
-
-    
-  
+    - name: Ubuntu-22.04 
+      uses: docker/build-push-action@v5.3.0
+      with:
+        context: .
+        file: ./ubuntu/22.04/Dockerfile
+        platforms: linux/amd64,linux/arm64
+        push: true
+        tags: |
+          flomesh/ubuntu:22.04
+          
